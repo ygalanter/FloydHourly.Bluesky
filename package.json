@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prettier": "prettier --write './**/*.{js,ts,tsx,jsx}'",
     "start": "ts-node-esm index.ts"
   },
   "keywords": [],
