@@ -53,7 +53,7 @@ function doQuote(songs: Song[], reply?: any) {
 
     const post = `${line}\n\n${song.title} - ${song.album}`;
 
-    console.log(`\n${new Date().toLocaleString()}: ${post}`);
+    console.log(`${new Date().toLocaleString()}: ${post}\n`);
 
     agent
       .post({
@@ -137,5 +137,4 @@ setInterval(async () => {
 
   await agent.updateSeenNotifications();
 
-  console.log('Ping...');
 }, 5000);
