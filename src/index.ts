@@ -1,49 +1,7 @@
-import bsky from '@atproto/api';
-const { BskyAgent } = bsky;
-import * as dotenv from 'dotenv';
-import process from 'node:process';
-import fs from 'node:fs';
-import { parse } from 'csv-parse/sync';
+import { agent } from './bsky.js';
+import { Song, loadSongs } from './songs.js';
 
-dotenv.config();
-
-const agent = new BskyAgent({
-  service: 'https://bsky.social',
-});
-
-await agent.login({
-  identifier: process.env.BSKY_USERNAME!,
-  password: process.env.BSKY_PASSWORD!,
-});
-
-class Song {
-  readonly album: string;
-  readonly title: string;
-  readonly lyrics: string[];
-
-  constructor(rawSong: string[]) {
-    this.album = rawSong[0];
-    this.title = rawSong[1];
-    this.lyrics = rawSong[3]
-      .replace('\n\n', '\n')
-      .split('\n')
-      .filter((line) => line.trim().length > 20); // removing small lines
-  }
-}
-
-function sanitize(str: string): string {
-  return str.replace(/[` .,-?'’()]/g, '');
-}
-
-function loadSongs() {
-  const csv: string[][] = parse(fs.readFileSync('./pink_floyd_lyrics.csv', 'utf-8')); // reading and parsing CSV file
-  const rawSongs = csv.filter((row) => row[3].trim() != ''); // removing songs with empty lyrics (instrumentals)
-  const songs = rawSongs.map((rawSong) => new Song(rawSong));
-
-  return songs;
-}
-
-function doQuote(songs: Song[], reply?: any) {
+const doQuote = (songs: Song[], reply?: any) => {
   const songIndex = Math.floor(Math.random() * songs.length);
   const song = songs[songIndex];
 
@@ -74,7 +32,7 @@ function doQuote(songs: Song[], reply?: any) {
   }
 
   return songs.length;
-}
+};
 
 console.log(`${new Date().toLocaleString()}: ****** Floyd Quoter Started *****\n`);
 
@@ -92,29 +50,10 @@ setInterval(() => {
 
 // ****** Reply to notifications part
 
-const paginateAll = async <T extends { cursor?: string }>(
-  fn: (cursor?: string) => Promise<T>,
-  limit = Infinity,
-): Promise<T[]> => {
-  const results: T[] = [];
-  let cursor;
-  do {
-    const res = await fn(cursor);
-    results.push(res);
-    cursor = res.cursor;
-  } while (cursor && results.length < limit);
-  return results;
-};
-
-const paginator = async (cursor?: string) => {
-  const res = await agent.listNotifications({ cursor });
-  return res.data;
-};
-
 setInterval(async () => {
-  const allNotifications = (await paginateAll(paginator)).map((r) => r.notifications).flat();
+  const { data } = await agent.listNotifications();
 
-  allNotifications
+  data.notifications
     .filter((n) => n.reason == 'mention' && !n.isRead)
     .forEach(async (n) => {
       console.log('**** Replying!!!');
@@ -136,5 +75,4 @@ setInterval(async () => {
     });
 
   await agent.updateSeenNotifications();
-
 }, 5000);

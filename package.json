@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prettier": "prettier --write './**/*.{js,ts,tsx,jsx}'",
-    "start": "ts-node-esm index.ts"
+    "prettier": "prettier --write './src/**/*.{js,ts,tsx,jsx}'",
+    "start": "ts-node-esm ./src/index.ts"
   },
   "keywords": [],
   "author": "",
