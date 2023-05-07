@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import { parse } from 'csv-parse/sync';
 
-export class Song {
+/** Transforms raw song text into album/title/lyrics construct */
+class Song {
   readonly album: string;
   readonly title: string;
   readonly lyrics: string[];
@@ -16,10 +17,48 @@ export class Song {
   }
 }
 
-export function loadSongs() {
-  const csv: string[][] = parse(fs.readFileSync('./pink_floyd_lyrics.csv', 'utf-8')); // reading and parsing CSV file
-  const rawSongs = csv.filter((row) => row[3].trim() != ''); // removing songs with empty lyrics (instrumentals)
-  const songs = rawSongs.map((rawSong) => new Song(rawSong));
+export class SongCollection {
+  private _songs: Song[];
 
-  return songs;
+  private loadSongs() {
+    const csv: string[][] = parse(fs.readFileSync('./pink_floyd_lyrics.csv', 'utf-8')); // reading and parsing CSV file
+    const rawSongs = csv.filter((row) => row[3].trim() != ''); // removing songs with empty lyrics (instrumentals)
+    const songs = rawSongs.map((rawSong) => new Song(rawSong));
+
+    return songs;
+  }
+
+  constructor() {
+    this._songs = this.loadSongs();
+  }
+
+  get song() {
+    // random song
+    const songIndex = Math.floor(Math.random() * this._songs.length);
+    const song = this._songs[songIndex];
+
+    // random lyrics line within the song
+    const lineIndex = Math.floor(Math.random() * song.lyrics.length);
+    const line = song.lyrics[lineIndex];
+
+    // preparing the skeet to be posted
+    const skeet = `${line}\n\n${song.title} - ${song.album}`;
+    console.log(`${new Date().toLocaleString()}: ${skeet}\n`);
+
+    // removing the line from the song
+    song.lyrics.splice(lineIndex, 1);
+    console.log(`- ${song.lyrics.length} lyric lines remaining in this song\n`);
+
+    if (song.lyrics.length === 0) {
+      this._songs.splice(songIndex, 1);
+      console.log(`- removing song with empty lyrics, ${this._songs.length} songs remaining\n`);
+    }
+
+    if (this._songs.length === 0) {
+      console.log(`*** Used all songs - reloading songs\n`);
+      this._songs = this.loadSongs();
+    }
+
+    return skeet;
+  }
 }
