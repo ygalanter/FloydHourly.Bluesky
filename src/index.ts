@@ -7,7 +7,12 @@ dotenv.config();
 
 // initializing bot
 BskyBot.setOwner({ handle: process.env.BSKY_OWNER_HANDLE!, contact: process.env.BSKY_OWNER_EMAIL! });
-const bot = new BskyBot({ handle: process.env.BSKY_BOT_HANDLE!, useNonBotHandle: true });
+const bot = new BskyBot({
+  handle: process.env.BSKY_BOT_HANDLE!,
+  useNonBotHandle: true,
+  replyToBots: false,
+  replyToNonFollowers: true,
+});
 await bot.login(process.env.BSKY_BOT_PASSWORD!);
 
 // initializing song collection
