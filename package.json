@@ -5,17 +5,18 @@
   "main": "index.js",
   "scripts": {
     "prettier": "prettier --write './src/**/*.{js,ts,tsx,jsx}'",
-    "start": "ts-node-esm ./src/index.ts"
+    "ts-node": "ts-node", 
+    "start": "node --loader ts-node/esm ./src/index.ts"
   },
   "keywords": [],
   "author": "",
   "type": "module",
   "license": "ISC",
   "dependencies": {
+    "@skyware/bot": "^0.1.2",
     "cron": "^2.3.0",
     "csv-parse": "^5.3.6",
-    "dotenv": "^16.0.3",
-    "easy-bsky-bot-sdk": "^0.1.2"
+    "dotenv": "^16.0.3"
   },
   "devDependencies": {
     "@types/cron": "^2.0.1",
@@ -24,6 +25,7 @@
     "@typescript-eslint/parser": "^5.57.1",
     "eslint": "^8.38.0",
     "prettier": "^2.8.7",
+    "ts-node": "^10.9.2",
     "typescript": "^5.0.4"
   }
 }

@@ -1,35 +1,40 @@
-import { BskyBot, Events } from 'easy-bsky-bot-sdk';
+import { Bot } from '@skyware/bot';
 import { SongCollection } from './songs.js';
 import * as dotenv from 'dotenv';
 import { CronJob } from 'cron';
+import { text } from 'stream/consumers';
 
 dotenv.config();
 
-// initializing bot
-BskyBot.setOwner({ handle: process.env.BSKY_OWNER_HANDLE!, contact: process.env.BSKY_OWNER_EMAIL! });
-const bot = new BskyBot({
-  handle: process.env.BSKY_BOT_HANDLE!,
-  useNonBotHandle: true,
-  replyToBots: false,
-  replyToNonFollowers: true,
+const bot = new Bot();
+await bot.login({
+  identifier: process.env.BSKY_BOT_HANDLE!,
+  password: process.env.BSKY_BOT_PASSWORD!,
 });
-await bot.login(process.env.BSKY_BOT_PASSWORD!);
 
 // initializing song collection
 const songCollection = new SongCollection();
 
 // replying to mentions
-bot.setHandler(Events.MENTION, async ({ post }) => {
-  console.log(`In reply to @${post.author.handle}: ${post.text}`);
-  await bot.like(post);
-  await bot.reply(songCollection.song, post);
+bot.on('mention', async (mention) => {
+  await mention.like();
+  console.log(`In reply to @${mention.author.handle}: ${mention.text}`);
+  await mention.reply({
+    text: songCollection.song,
+  });
 });
-bot.startPolling();
 
 // posting a skeet every 2 hours
 const job = new CronJob('0 */2 * * *', async () => {
-  await bot.post(songCollection.song);
+  await bot.post({
+    text: songCollection.song,
+  });
 });
 
 console.log(`${new Date().toLocaleString()}: ****** Floyd Quoter Started *****\n`);
+
+// posting initial skeet, and starting the job
+await bot.post({
+  text: songCollection.song,
+});
 job.start();
