@@ -11,12 +11,24 @@ const reply = async (mention: Post) => {
   });
 };
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const createBot = async () => {
   const bot = new Bot();
-  await bot.login({
-    identifier: process.env.BSKY_BOT_HANDLE!,
-    password: process.env.BSKY_BOT_PASSWORD!,
-  });
+
+  try {
+    await bot.login({
+      identifier: process.env.BSKY_BOT_HANDLE!,
+      password: process.env.BSKY_BOT_PASSWORD!,
+    });
+  } catch (error) {
+    console.error(`\n*** ${new Date().toLocaleString()}: Error logging in. Retrying in 1 minute.\n`);
+    await sleep(60000);
+    await bot.login({
+      identifier: process.env.BSKY_BOT_HANDLE!,
+      password: process.env.BSKY_BOT_PASSWORD!,
+    });
+  }
 
   bot.on('mention', reply);
 
@@ -32,9 +44,18 @@ let dynamicBot = await createBot();
 // posting a skeet every 2 hours
 const job = new CronJob('0 */2 * * *', async () => {
   dynamicBot = await createBot();
-  await dynamicBot.post({
-    text: songCollection.song,
-  });
+
+  try {
+    await dynamicBot.post({
+      text: songCollection.song,
+    });
+  } catch (error) {
+    console.error(`\n*** ${new Date().toLocaleString()}: Error posting. Retrying in 1 minute.\n`);
+    await sleep(60000);
+    await dynamicBot.post({
+      text: songCollection.song,
+    });
+  }
 });
 
 console.log(`\n${new Date().toLocaleString()}: ****** Floyd Quoter Started *****\n`);
