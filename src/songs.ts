@@ -32,7 +32,7 @@ export class SongCollection {
     this._songs = this.loadSongs();
   }
 
-  get song() {
+  get song(): string {
     // random song
     const songIndex = Math.floor(Math.random() * this._songs.length);
     const song = this._songs[songIndex];
@@ -59,6 +59,10 @@ export class SongCollection {
       this._songs = this.loadSongs();
     }
 
-    return skeet;
+    if (line === undefined) {
+      return this.song;
+    } else {
+      return skeet;
+    }
   }
 }
