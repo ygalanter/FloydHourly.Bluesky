@@ -32,7 +32,7 @@ const createBot = async () => {
 
   bot.on('mention', reply);
   bot.on('error', (error) => {
-    console.error(`\n*** ${new Date().toLocaleString()}: Error: ${error}\n`);
+    console.error(`\n*** ${new Date().toLocaleString()}: Error: ${JSON.stringify(error)}\n`);
   });
 
   return bot;
