@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prettier": "prettier --write './src/**/*.{js,ts,tsx,jsx}'",
+    "prettier": "prettier --write \"./src/**/*.{js,ts,tsx,jsx}\"",
     "ts-node": "ts-node", 
     "start": "node --loader ts-node/esm ./src/index.ts"
   },
@@ -14,9 +14,9 @@
   "license": "ISC",
   "dependencies": {
     "@skyware/bot": "^0.1.2",
-    "cron": "^2.3.0",
-    "csv-parse": "^5.3.6",
-    "dotenv": "^16.0.3"
+    "cron": "^3.1.7",
+    "csv-parse": "^5.5.6",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@types/cron": "^2.0.1",
