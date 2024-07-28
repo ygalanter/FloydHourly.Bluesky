@@ -59,7 +59,8 @@ export class SongCollection {
       this._songs = this.loadSongs();
     }
 
-    if (line === undefined) {
+    // if incorrect skeet was generated - retry
+    if (skeet.includes('song_title')) {
       return this.song;
     } else {
       return skeet;
