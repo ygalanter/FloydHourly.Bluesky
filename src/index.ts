@@ -46,7 +46,7 @@ let dynamicBot = await createBot();
 
 // posting a skeet every 2 hours
 const job = new CronJob('0 */2 * * *', async () => {
-  dynamicBot = await createBot();
+  //dynamicBot = await createBot();
 
   try {
     await dynamicBot.post({
