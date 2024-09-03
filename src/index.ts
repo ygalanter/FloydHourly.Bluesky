@@ -46,7 +46,13 @@ let dynamicBot = await createBot();
 
 // posting a skeet every 2 hours
 const job = new CronJob('0 */2 * * *', async () => {
-  //dynamicBot = await createBot();
+  
+  if (!dynamicBot.hasSession) {
+    await dynamicBot.login({
+      identifier: process.env.BSKY_BOT_HANDLE!,
+      password: process.env.BSKY_BOT_PASSWORD!,
+    });
+  }
 
   try {
     await dynamicBot.post({
