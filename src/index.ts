@@ -3,13 +3,14 @@ import { SongCollection } from './songs.js';
 import * as dotenv from 'dotenv';
 import { CronJob } from 'cron';
 
-const reply = async (mention: Post) => {
-  await mention.like();
-  console.log(`\nIn reply to @${mention.author.handle}: ${mention.text}\n`);
-  await mention.reply({
-    text: songCollection.song,
-  });
-};
+// not-doing-it
+// const reply = async (mention: Post) => {
+//   await mention.like();
+//   console.log(`\nIn reply to @${mention.author.handle}: ${mention.text}\n`);
+//   await mention.reply({
+//     text: songCollection.song,
+//   });
+// };
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -30,7 +31,7 @@ const createBot = async () => {
     });
   }
 
-  bot.on('mention', reply);
+  // not-doing-it bot.on('mention', reply);
   bot.on('error', (error) => {
     console.error(`\n*** ${new Date().toLocaleString()}: Error: ${JSON.stringify(error)}\n`);
   });
